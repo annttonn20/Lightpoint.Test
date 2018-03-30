@@ -25,8 +25,7 @@ namespace Lightpoint.Test.Business
             await context.Products.AddAsync(new ProductsEntity
             {
                 Name = productStruct.Name,
-                Description = productStruct.Description,
-                Id = productStruct.Id
+                Description = productStruct.Description,                
             });
 
             try

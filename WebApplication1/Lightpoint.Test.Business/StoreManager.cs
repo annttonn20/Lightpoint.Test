@@ -54,9 +54,12 @@ namespace Lightpoint.Test.Business
                     WorkingHour = item.WorkingHours,
                     Id = item.Id
                 };
+                storeStruct.Products = new List<ProductStruct>();
                 foreach (var product in item.StoreProduct)
                 {
-                    storeStruct.ProductId.Add(product.ProductId);
+                    var productEntity = await context.Products.SingleOrDefaultAsync(p => p.Id == product.ProductId);
+                    ProductStruct productStruct = new ProductStruct { Id = productEntity.Id, Name = productEntity.Name, Description = productEntity.Description };
+                    storeStruct.Products.Add(productStruct);
                 }
             }
             return result;

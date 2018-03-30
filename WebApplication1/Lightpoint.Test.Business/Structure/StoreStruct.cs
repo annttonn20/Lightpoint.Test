@@ -10,6 +10,6 @@ namespace Lightpoint.Test.Business.Structure
         public string Name { get; set; }
         public string Address { get; set; }
         public string WorkingHour { get; set; }
-        public List<int> ProductId { get; set; }
+        public List<ProductStruct> Products { get; set; }
     }
 }
