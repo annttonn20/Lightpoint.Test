@@ -1,0 +1,69 @@
+﻿using Lightpoint.Test.Business.Exception_Messages;
+using Lightpoint.Test.Business.Exceptions;
+using Lightpoint.Test.Business.Interface;
+using Lightpoint.Test.Business.Structure;
+using Lightpoint.Test.Data;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Lightpoint.Test.Business
+{
+    public class ProductManager : IProductManager
+    {
+        private readonly DatabaseContext context;
+
+        internal ProductManager(DatabaseContext context)
+        {
+            this.context = context ?? throw new ArgumentNullException();
+        }
+        public async Task<bool> AddAsync(ProductStruct productStruct)
+        {
+            await context.Products.AddAsync(new ProductsEntity
+            {
+                Name = productStruct.Name,
+                Description = productStruct.Description,
+                Id = productStruct.Id
+            });
+
+            try
+            {
+                return (await context.SaveChangesAsync()) > 0;
+            }
+            catch (DbUpdateException dbe)
+            {
+
+                throw new ExistsInDBException(ExceptionMessages.CannotAddProduct(), dbe);
+            }
+        }
+
+        public async Task<IEnumerable<ProductStruct>> GetAllAsync()
+        {
+            List<ProductStruct> result = new List<ProductStruct>();
+            List<ProductsEntity> products = await context.Products.Select(p => p).ToListAsync();
+            foreach (var item in products)
+            {
+                result.Add(new ProductStruct
+                {
+                    Name = item.Name,
+                    Description = item.Description,
+                    Id = item.Id
+                });
+            }
+            return result;
+        }
+
+        public Task<ProductStruct> GetOneAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> RemoveAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
