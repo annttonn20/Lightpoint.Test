@@ -20,12 +20,14 @@ namespace Lightpoint.Test.Business.Tests
         public async Task AddAsyncTestOkAsync(string databasename, string description, string name)
         {
             ProductStruct productStruct = new ProductStruct { Description = description, Name = name };
-            InMemoryContext context = new InMemoryContext(databasename);
-            ProductManager product = new ProductManager(context);
+            using (InMemoryContext context = new InMemoryContext(databasename))
+            {
+                ProductManager product = new ProductManager(context);
 
-            bool result = await product.AddAsync(productStruct);
+                bool result = await product.AddAsync(productStruct);
 
-            Assert.IsTrue(result);
+                Assert.IsTrue(result);
+            }
         }
 
 
@@ -35,43 +37,50 @@ namespace Lightpoint.Test.Business.Tests
         public async Task AddAsyncTestFaildAsync(string databasename, string description, string name)
         {
             ProductStruct productStruct = new ProductStruct { Description = description, Name = name };
-            InMemoryContext context = new InMemoryContext(databasename);
-            ProductManager product = new ProductManager(context);
-            await context.Products.AddAsync(new ProductsEntity { Name = name });
-            Assert.ThrowsAsync<ExistsInDBException>(async () => await product.AddAsync(productStruct));
+            using (InMemoryContext context = new InMemoryContext(databasename))
+            {
+                ProductManager product = new ProductManager(context);
+                await context.Products.AddAsync(new ProductsEntity { Name = name });
+                Assert.ThrowsAsync<ExistsInDBException>(async () => await product.AddAsync(productStruct));
+            }
         }
 
         [Test]
         [AutoData]
         public async Task GetAllAsyncOk1Async(string databasename, string description, string name)
         {
-            InMemoryContext context = new InMemoryContext(databasename);
-            ProductManager product = new ProductManager(context);
-            await context.Products.AddAsync(new ProductsEntity { Name = name , Description = description});
-            IEnumerable<ProductStruct> productStructs = await product.GetAllAsync();
-
-            Assert.NotNull(productStructs);
+            using (InMemoryContext context = new InMemoryContext(databasename))
+            {
+                ProductManager product = new ProductManager(context);
+                await context.Products.AddAsync(new ProductsEntity { Name = name, Description = description });
+                IEnumerable<ProductStruct> productStructs = await product.GetAllAsync();
+                Assert.NotNull(productStructs);
+            }
         }
 
         [Test]
         [AutoData]
         public async Task GetAllAsyncOk2Async(string databasename, string description, string name)
         {
-            InMemoryContext context = new InMemoryContext(databasename);
-            ProductManager product = new ProductManager(context);
-            IEnumerable<ProductStruct> productStructs = await product.GetAllAsync();
+            using (InMemoryContext context = new InMemoryContext(databasename))
+            {
+                ProductManager product = new ProductManager(context);
+                IEnumerable<ProductStruct> productStructs = await product.GetAllAsync();
 
-            Assert.NotNull(productStructs);
+                Assert.NotNull(productStructs);
+            }
         }
 
         [Test]
         [AutoData]
         public async Task ConstructorOKAsync(string databasename)
         {
-            InMemoryContext context = new InMemoryContext(databasename);
-            ProductManager product = new ProductManager(context);
-            
-            Assert.NotNull(product);
+            using (InMemoryContext context = new InMemoryContext(databasename))
+            {
+                ProductManager product = new ProductManager(context);
+
+                Assert.NotNull(product);
+            }
         }
 
         [Test]

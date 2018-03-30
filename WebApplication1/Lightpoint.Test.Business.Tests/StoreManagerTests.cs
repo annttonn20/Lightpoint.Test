@@ -19,12 +19,14 @@ namespace Lightpoint.Test.Business.Tests
         public async Task AddAsyncTestOkAsync(string databasename, string address, string name)
         {
             StoreStruct storeStruct = new StoreStruct { Address = address, Name = name };
-            InMemoryContext context = new InMemoryContext(databasename);
-            StoreManager store = new StoreManager(context);
+            using (InMemoryContext context = new InMemoryContext(databasename))
+            {
+                StoreManager store = new StoreManager(context);
 
-            bool result = await store.AddAsync(storeStruct);
+                bool result = await store.AddAsync(storeStruct);
 
-            Assert.IsTrue(result);
+                Assert.IsTrue(result);
+            }
         }
 
 
@@ -34,10 +36,12 @@ namespace Lightpoint.Test.Business.Tests
         public async Task AddAsyncTestFaildAsync(string databasename, string address, string name)
         {
             StoreStruct storeStruct = new StoreStruct { Address = address, Name = name };
-            InMemoryContext context = new InMemoryContext(databasename);
-            StoreManager store = new StoreManager(context);
-            await context.Stores.AddAsync(new StoresEntity { Name = name });
-            Assert.ThrowsAsync<ExistsInDBException>(async () => await store.AddAsync(storeStruct));
+            using (InMemoryContext context = new InMemoryContext(databasename))
+            {
+                StoreManager store = new StoreManager(context);
+                await context.Stores.AddAsync(new StoresEntity { Name = name });
+                Assert.ThrowsAsync<ExistsInDBException>(async () => await store.AddAsync(storeStruct));
+            }
         }
 
         [Test]
@@ -45,33 +49,39 @@ namespace Lightpoint.Test.Business.Tests
         public async Task GetAllAsyncOk1Async(string databasename, string address, string name)
         {
             StoreStruct storeStruct = new StoreStruct { Address = address, Name = name };
-            InMemoryContext context = new InMemoryContext(databasename);
-            StoreManager store = new StoreManager(context);
-            await context.Stores.AddAsync(new StoresEntity { Name = name, Address = address});
-            IEnumerable<StoreStruct> storeStructs = await store.GetAllAsync();
+            using (InMemoryContext context = new InMemoryContext(databasename))
+            {
+                StoreManager store = new StoreManager(context);
+                await context.Stores.AddAsync(new StoresEntity { Name = name, Address = address });
+                IEnumerable<StoreStruct> storeStructs = await store.GetAllAsync();
 
-            Assert.NotNull(storeStructs);
+                Assert.NotNull(storeStructs);
+            }
         }
 
         [Test]
         [AutoData]
         public async Task GetAllAsyncOk2Async(string databasename, string description, string name)
         {
-            InMemoryContext context = new InMemoryContext(databasename);
-            StoreManager store = new StoreManager(context);
-            IEnumerable<StoreStruct> storeStructs = await store.GetAllAsync();
+            using (InMemoryContext context = new InMemoryContext(databasename))
+            {
+                StoreManager store = new StoreManager(context);
+                IEnumerable<StoreStruct> storeStructs = await store.GetAllAsync();
 
-            Assert.NotNull(storeStructs);
+                Assert.NotNull(storeStructs);
+            }
         }
 
         [Test]
         [AutoData]
         public async Task ConstructorOKAsync(string databasename)
         {
-            InMemoryContext context = new InMemoryContext(databasename);
-            StoreManager store = new StoreManager(context);
+            using (InMemoryContext context = new InMemoryContext(databasename))
+            {
+                StoreManager store = new StoreManager(context);
 
-            Assert.NotNull(store);
+                Assert.NotNull(store);
+            }
         }
 
         [Test]

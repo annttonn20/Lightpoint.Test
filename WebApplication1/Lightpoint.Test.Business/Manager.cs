@@ -22,7 +22,7 @@ namespace Lightpoint.Test.Business
 
 
 
-        public async Task<bool> AddProductToStore(string storeName, string productName)
+        public async Task<bool> AddProductToStoreAsync(string storeName, string productName)
         {
             StoresEntity stores = await context.Stores.FirstOrDefaultAsync(s => s.Name == storeName);
             if (stores == null)
@@ -30,7 +30,7 @@ namespace Lightpoint.Test.Business
                 throw new NoExistInDbException(ExceptionMessages.CannotAddProductToStoreSTORE());
             }
             ProductsEntity products = await context.Products.FirstOrDefaultAsync(p => p.Name == productName);
-            if (stores == null)
+            if (products == null)
             {
                 throw new NoExistInDbException(ExceptionMessages.CannotAddProductToStorePRODUCT());
             }
@@ -49,7 +49,7 @@ namespace Lightpoint.Test.Business
         }
 
 
-        public async Task<bool> RemoveProductFromStore(string storeName, string productName)
+        public async Task<bool> RemoveProductFromStoreAsync(string storeName, string productName)
         {
             StoresEntity stores = await context.Stores.FirstOrDefaultAsync(s => s.Name == storeName);
             if (stores == null)
@@ -57,7 +57,7 @@ namespace Lightpoint.Test.Business
                 throw new NoExistInDbException(ExceptionMessages.CannotRemoveProductFromStoreSTORE());
             }
             ProductsEntity products = await context.Products.FirstOrDefaultAsync(p => p.Name == productName);
-            if (stores == null)
+            if (products == null)
             {
                 throw new NoExistInDbException(ExceptionMessages.CannotRemoveProductFromStoreSTORE());
             }

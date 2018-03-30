@@ -7,7 +7,7 @@ namespace Lightpoint.Test.Business.Interface
 {
     public interface IManager
     {
-        Task<bool> AddProductToStore(string storeName, string productName);
-        Task<bool> RemoveProductFromStore(string storeName, string productName);
+        Task<bool> AddProductToStoreAsync(string storeName, string productName);
+        Task<bool> RemoveProductFromStoreAsync(string storeName, string productName);
     }
 }
