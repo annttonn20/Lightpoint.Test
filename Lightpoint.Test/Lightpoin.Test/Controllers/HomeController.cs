@@ -9,6 +9,7 @@ using Lightpoin.Test.Web.Models;
 using Lightpoint.Test.Business.Interface;
 using Lightpoint.Test.Business.Structure;
 using Lightpoint.Test.Business.Exceptions;
+using System.Net;
 
 namespace Lightpoin.Test.Controllers
 {
@@ -26,43 +27,21 @@ namespace Lightpoin.Test.Controllers
             this.storeManager = storeManager;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> AllStores()
         {
-            IEnumerable<StoreStruct> storeStruct = await storeManager.GetAllAsync();
+            StoreModel storeModel = new StoreModel();
+            storeModel.StoreStructs = await storeManager.GetAllAsync();
 
-            List<StoreModel> storeModels = new List<StoreModel>();
-            foreach (var item in storeStruct)
-            {
 
-                StoreModel model = new StoreModel
-                {
-                    Id = item.Id,
-                    Name = item.Name,
-                    Address = item.Address,
-                    WorkingHours = item.WorkingHours,
-                };
-                storeModels.Add(model);
-            }
-            return View(storeModels);
+            return View(storeModel);
         }
 
         public async Task<IActionResult> AllProducts()
         {
-            IEnumerable<ProductStruct> productStruct = await productManager.GetAllAsync();
+            ProductModel productModel = new ProductModel();
+            productModel.ProductStructs = await productManager.GetAllAsync();
 
-            List<ProductModel> productModels = new List<ProductModel>();
-            foreach (var item in productStruct)
-            {
-
-                ProductModel model = new ProductModel
-                {
-                    Id = item.Id,
-                    Name = item.Name,
-                    Description = item.Description
-                };
-                productModels.Add(model);
-            }
-            return View(productModels);
+            return View(productModel);
         }
 
         [HttpPost]
@@ -79,7 +58,7 @@ namespace Lightpoin.Test.Controllers
                         WorkingHours = storeModel.WorkingHours
                     });
                     storeModel.Id = id;
-                    return RedirectToAction(nameof(Index));
+                    return PartialView("SingleStore", storeModel);
                 }
                 catch (ExistsInDBException e)
                 {
@@ -90,7 +69,8 @@ namespace Lightpoin.Test.Controllers
             {
                 ViewData["Errors"] = "The field can not be empty";
             }
-            return View(storeModel);
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Content(ViewData["Errors"].ToString());
         }
 
         [HttpPost]
@@ -106,7 +86,7 @@ namespace Lightpoin.Test.Controllers
                         Description = productModel.Description
                     });
                     productModel.Id = id;
-                    return RedirectToAction(nameof(AllProducts));
+                    return PartialView("SingleProduct",productModel);
                 }
                 catch (ExistsInDBException e)
                 {
@@ -117,7 +97,8 @@ namespace Lightpoin.Test.Controllers
             {
                 ViewData["Errors"] = "The field can not be empty";
             }
-            return View(productModel);
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Content(ViewData["Errors"].ToString());
         }
 
         [HttpPost]
@@ -128,7 +109,7 @@ namespace Lightpoin.Test.Controllers
                 try
                 {
                     await manager.AddProductToStoreAsync(AddPtoSModel.StoreId, AddPtoSModel.ProductName);
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(AllStores));
                 }
                 catch (ExistsInDBException e)
                 {
@@ -138,7 +119,7 @@ namespace Lightpoin.Test.Controllers
                 {
                     ViewData["Errors"] = e.Message;
 
-                }               
+                }
             }
             else
             {
@@ -147,26 +128,15 @@ namespace Lightpoin.Test.Controllers
             return View(AddPtoSModel);
         }
 
-        public IActionResult AddStore()
-        {
-
-            return PartialView();
-        }
-
-        public IActionResult AddProduct()
-        {
-
-            return PartialView();
-        }
 
         public IActionResult AddProductToStore()
         {
             return PartialView();
         }
 
-        public async Task<IActionResult> StoreProducts(int productId)
+        public async Task<IActionResult> StoreProducts(int storeId)
         {
-            StoreStruct storeStruct = await storeManager.GetOneAsync(productId);
+            StoreStruct storeStruct = await storeManager.GetOneAsync(storeId);
             ViewData.Add("StoreName", storeStruct.Name);
             List<ProductModel> productModels = new List<ProductModel>();
             foreach (var product in storeStruct.Products)
@@ -184,12 +154,6 @@ namespace Lightpoin.Test.Controllers
         }
 
 
-        //public IActionResult Product()
-        //{
-        //    ViewData["Message"] = "Your application description page.";
-
-        //    return View();
-        //}
 
         public IActionResult Error()
         {

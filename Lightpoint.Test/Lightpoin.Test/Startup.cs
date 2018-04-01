@@ -46,7 +46,7 @@ namespace Lightpoin.Test
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=AllStores}/{id?}");
             });
         }
     }

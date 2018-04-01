@@ -1,5 +1,5 @@
 ﻿@using Lightpoin.Test.Web.Models
-@model IEnumerable<ProductModel>
+@model ProductModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -8,23 +8,43 @@
 
     <div class="row">
         <div class="text-center">
-            <p style="font-size: 40px;">Products</p>
+            <p style="font-size: 40px;">Product</p>
             <div class="row">
-                @{string url = Url.Action();
-                    for (int i = url.Length - 1; i > 0; i--)
-                    {
-                        if (i != '/')
-                        {
-                            url.Remove(i);
-
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    } }
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="/Home/AddProduct">Add Product</button>
-
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseAddProduct" aria-expanded="false" aria-controls="collapseAddProduct">
+                    Add product
+                </button>
+            </div>
+            <div class="collapse" id="collapseAddProduct">
+                <div class="col-md-6 col-md-offset-3">
+                    <div class="jumbotron">
+                        <form action="AddProduct")" method="post" id="AddProduct">
+                            <div class="form-group">
+                                <label for="Name" class="control-label">Product Name</label>
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">
+                                        <label for="Name"><span class="glyphicon glyphicon-apple" style="color:#286090"></span></label>
+                                    </span>
+                                    <input type="text" asp-for="Name" class="form-control" id="Name" placeholder="Product Name">
+                                    <span asp-validation-for="Name" class="text-danger" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="Description" class="control-label">Description</label>
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">
+                                        <label for="Description"><span class="glyphicon glyphicon-question-sign" style="color:#286090"></span></label>
+                                    </span>
+                                    <input type="text" asp-for="Description" class="form-control" id="Description" placeholder="Description">
+                                    <span asp-validation-for="Description" class="text-danger" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseAddProduct" aria-expanded="false" aria-controls="collapseAddProduct">Close</button>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -37,9 +57,9 @@
                     <th>Description</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="AddNewProduct">
 
-                @{foreach (var product in Model)
+                @{foreach (var product in Model.ProductStructs)
                     {
 
                         <tr>
@@ -53,13 +73,6 @@
                 }
             </tbody>
         </table>
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div id="AddProducts"></div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 @section Scripts {
@@ -78,7 +91,14 @@
                 event.preventDefault();
                 var data = $(this).serialize();
                 var url = $(this).attr('action');
-                $.post(url, data);
+
+                $.post(url, data).done(function (response) {
+                    $('#AddNewProduct').append(response);
+                    jQuery('#AddProduct')[0].reset();
+                    alert("Product Added")
+                }).fail(function (data) {
+                    alert(data.responseText);
+                });
             });
 
         });

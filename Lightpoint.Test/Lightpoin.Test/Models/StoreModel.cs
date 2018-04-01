@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lightpoint.Test.Business.Structure;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -15,5 +16,6 @@ namespace Lightpoin.Test.Web.Models
         public string Address { get; set; }
         [Required(ErrorMessage = "The field can not be empty")]
         public string WorkingHours { get; set; }
+        public IEnumerable<StoreStruct> StoreStructs { get; set; }
     }
 }
