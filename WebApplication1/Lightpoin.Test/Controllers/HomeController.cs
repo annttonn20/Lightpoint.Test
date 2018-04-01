@@ -138,8 +138,7 @@ namespace Lightpoin.Test.Controllers
                 {
                     ViewData["Errors"] = e.Message;
 
-                }
-                return RedirectToAction(nameof(Index));
+                }               
             }
             else
             {

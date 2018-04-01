@@ -48,15 +48,41 @@ namespace Lightpoint.Test.Business
             }
         }
 
-
-        public async Task<bool> RemoveProductFromStoreAsync(string storeName, string productName)
+        internal async Task<bool> AddProductToStoreAsync(string storeName, string productName)
         {
             StoresEntity stores = await context.Stores.FirstOrDefaultAsync(s => s.Name == storeName);
             if (stores == null)
             {
-                throw new NoExistInDbException(ExceptionMessages.CannotRemoveProductFromStoreSTORE());
+                throw new NoExistInDbException(ExceptionMessages.CannotAddProductToStoreSTORE());
             }
             ProductsEntity products = await context.Products.FirstOrDefaultAsync(p => p.Name == productName);
+            if (products == null)
+            {
+                throw new NoExistInDbException(ExceptionMessages.CannotAddProductToStorePRODUCT());
+            }
+            stores.StoreProduct = new List<ProductsAndStoresEntity>();
+
+            stores.StoreProduct.Add(new ProductsAndStoresEntity { ProductId = products.Id });
+            try
+            {
+                return (await context.SaveChangesAsync()) > 0;
+            }
+
+            catch (DbUpdateException dbe)
+            {
+                throw new ExistsInDBException(ExceptionMessages.CannotAddProductToStore(), dbe);
+            }
+        }
+
+
+        public async Task<bool> RemoveProductFromStoreAsync(string storeName, string productName)
+        {
+            StoresEntity stores = await context.Stores.Include(c => c.StoreProduct).FirstOrDefaultAsync(s => s.Name == storeName);
+            if (stores == null)
+            {
+                throw new NoExistInDbException(ExceptionMessages.CannotRemoveProductFromStoreSTORE());
+            }
+            ProductsEntity products = await context.Products.Include(c => c.ProductStore).FirstOrDefaultAsync(p => p.Name == productName);
             if (products == null)
             {
                 throw new NoExistInDbException(ExceptionMessages.CannotRemoveProductFromStoreSTORE());

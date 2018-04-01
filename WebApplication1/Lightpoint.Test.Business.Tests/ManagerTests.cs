@@ -84,23 +84,8 @@ namespace Lightpoint.Test.Business.Tests
             }
         }
 
-        [Test]
-        [AutoData]
-        public async Task RemoveProductFromStoreAsyncTestOk1Async(string databasename, string description, string name, string address)
-        {
-            using (InMemoryContext context = new InMemoryContext(databasename))
-            {
-                Manager manager = new Manager(context);
-                StoreManager storeManager = new StoreManager(context);
-                await context.Stores.AddAsync(new StoresEntity { Name = name, Address = address });
-                await context.Products.AddAsync(new ProductsEntity { Name = name });
-                await context.SaveChangesAsync();
-                await manager.AddProductToStoreAsync(name, name);
-                IEnumerable<StoreStruct> storeStructs = await storeManager.GetAllAsync();
-                StoreStruct storeStruct = storeStructs.SingleOrDefault(s => s.Name == name);
-                Assert.IsNull(storeStruct.Products);
-            }
-        }
+
+  
 
 
         [Test]

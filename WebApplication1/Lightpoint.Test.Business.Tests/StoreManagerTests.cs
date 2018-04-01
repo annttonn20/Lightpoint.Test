@@ -23,7 +23,7 @@ namespace Lightpoint.Test.Business.Tests
             {
                 StoreManager store = new StoreManager(context);
 
-                bool result = await store.AddAsync(storeStruct);
+                (bool result, int id) = await store.AddAsync(storeStruct);
 
                 Assert.IsTrue(result);
             }
@@ -74,7 +74,7 @@ namespace Lightpoint.Test.Business.Tests
 
         [Test]
         [AutoData]
-        public async Task ConstructorOKAsync(string databasename)
+        public void ConstructorOK(string databasename)
         {
             using (InMemoryContext context = new InMemoryContext(databasename))
             {
@@ -85,7 +85,7 @@ namespace Lightpoint.Test.Business.Tests
         }
 
         [Test]
-        public async Task ConstructoFaildAsync()
+        public void ConstructoFaild()
         {
             Assert.Throws<ArgumentNullException>(() => new StoreManager(null));
         }
