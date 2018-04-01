@@ -4,6 +4,7 @@ using Lightpoint.Test.Business.Interface;
 using Lightpoint.Test.Business.Structure;
 using Lightpoint.Test.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Lightpoint.Test.Business
 {
-    public class ProductManager : IProductManager
+    public class ProductManager : IManager<ProductStruct>
     {
         private readonly DatabaseContext context;
 
@@ -20,17 +21,17 @@ namespace Lightpoint.Test.Business
         {
             this.context = context ?? throw new ArgumentNullException();
         }
-        public async Task<bool> AddAsync(ProductStruct productStruct)
+        public async Task<(bool, int)> AddAsync(ProductStruct productStruct)
         {
-            await context.Products.AddAsync(new ProductsEntity
+            EntityEntry<ProductsEntity> pe = await context.Products.AddAsync(new ProductsEntity
             {
                 Name = productStruct.Name,
-                Description = productStruct.Description,                
+                Description = productStruct.Description,
             });
 
             try
             {
-                return (await context.SaveChangesAsync()) > 0;
+                return ((await context.SaveChangesAsync()) > 0, pe.Entity.Id);
             }
             catch (DbUpdateException dbe)
             {

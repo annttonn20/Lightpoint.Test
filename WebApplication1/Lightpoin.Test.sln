@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightpoin.Test.Web", "Light
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightpoint.Test.Data", "Lightpoint.Test.Data\Lightpoint.Test.Data.csproj", "{2484660A-BB00-494E-A087-6247D11AE2A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lightpoint.Test.Business", "Lightpoint.Test.Business\Lightpoint.Test.Business.csproj", "{DAFAD986-99D0-4B2C-B0F4-728E5B5BDCCD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightpoint.Test.Business", "Lightpoint.Test.Business\Lightpoint.Test.Business.csproj", "{DAFAD986-99D0-4B2C-B0F4-728E5B5BDCCD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lightpoint.Test.Business.Tests", "Lightpoint.Test.Business.Tests\Lightpoint.Test.Business.Tests.csproj", "{457BA47A-B62C-4427-8958-3D81AB2E7AE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightpoint.Test.Business.Tests", "Lightpoint.Test.Business.Tests\Lightpoint.Test.Business.Tests.csproj", "{457BA47A-B62C-4427-8958-3D81AB2E7AE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

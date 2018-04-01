@@ -9,7 +9,7 @@ namespace Lightpoint.Test.Business.Structure
         public int Id { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
-        public string WorkingHour { get; set; }
+        public string WorkingHours { get; set; }
         public List<ProductStruct> Products { get; set; }
     }
 }

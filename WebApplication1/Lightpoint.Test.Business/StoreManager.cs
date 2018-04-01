@@ -4,6 +4,7 @@ using Lightpoint.Test.Business.Interface;
 using Lightpoint.Test.Business.Structure;
 using Lightpoint.Test.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Lightpoint.Test.Business
 {
-    public class StoreManager : IStoreManager
+    public class StoreManager : IManager<StoreStruct>
     {
         private readonly DatabaseContext context;
 
@@ -21,18 +22,17 @@ namespace Lightpoint.Test.Business
             this.context = context ?? throw new ArgumentNullException();
         }
 
-        public async Task<bool> AddAsync(StoreStruct storeStruct)
+        public async Task<(bool, int)> AddAsync(StoreStruct storeStruct)
         {
-            await context.Stores.AddAsync(new StoresEntity
+            EntityEntry<StoresEntity> s =  await context.Stores.AddAsync(new StoresEntity
             {
                 Name = storeStruct.Name,
                 Address = storeStruct.Address,
-                WorkingHours = storeStruct.WorkingHour
+                WorkingHours = storeStruct.WorkingHours
             });
-
             try
             {
-                return (await context.SaveChangesAsync()) > 0;
+                return ((await context.SaveChangesAsync()) > 0, s.Entity.Id);
             }
             catch (DbUpdateException dbe)
             {
@@ -44,34 +44,45 @@ namespace Lightpoint.Test.Business
         public async Task<IEnumerable<StoreStruct>> GetAllAsync()
         {
             List<StoreStruct> result = new List<StoreStruct>();
-            List<StoresEntity> stores = await context.Stores.Select(p => p).ToListAsync();
-            foreach (var item in stores)
+            List<StoresEntity> stores = await context.Stores.Include(c => c.StoreProduct).Select(p => p).ToListAsync();
+            foreach (var storeEntity in stores)
             {
-                StoreStruct storeStruct = new StoreStruct
-                {
-                    Name = item.Name,
-                    Address = item.Address,
-                    WorkingHour = item.WorkingHours,
-                    Id = item.Id
-                };
-                foreach (var product in item.StoreProduct)
-                {
-                    if (storeStruct.Products == null)
-                    {
-                        storeStruct.Products = new List<ProductStruct>();
-                    }                   
+                result.Add(await CreatStoreStruct(storeEntity));
+            }
+            return result;
+        }
 
+        private async Task<StoreStruct> CreatStoreStruct(StoresEntity storeEntity)
+        {
+            StoreStruct storeStruct = new StoreStruct
+            {
+                Name = storeEntity.Name,
+                Address = storeEntity.Address,
+                WorkingHours = storeEntity.WorkingHours,
+                Id = storeEntity.Id
+            };
+            if (storeStruct.Products == null)
+            {
+                storeStruct.Products = new List<ProductStruct>();
+            }
+            if (storeEntity.StoreProduct != null)
+            {
+                foreach (var product in storeEntity.StoreProduct)
+                {
                     var productEntity = await context.Products.SingleOrDefaultAsync(p => p.Id == product.ProductId);
                     ProductStruct productStruct = new ProductStruct { Id = productEntity.Id, Name = productEntity.Name, Description = productEntity.Description };
                     storeStruct.Products.Add(productStruct);
                 }
             }
-            return result;
+            return storeStruct;
+
         }
 
-        public Task<StoreStruct> GetOneAsync(int id)
+
+        public async Task<StoreStruct> GetOneAsync(int id)
         {
-            throw new NotImplementedException();
+            StoresEntity storesEntity = await context.Stores.Include(c => c.StoreProduct).SingleOrDefaultAsync(s => s.Id == id);
+            return await CreatStoreStruct(storesEntity);
         }
 
         public Task<bool> RemoveAsync(int id)

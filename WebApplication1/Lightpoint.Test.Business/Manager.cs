@@ -22,9 +22,9 @@ namespace Lightpoint.Test.Business
 
 
 
-        public async Task<bool> AddProductToStoreAsync(string storeName, string productName)
+        public async Task<bool> AddProductToStoreAsync(int storeId, string productName)
         {
-            StoresEntity stores = await context.Stores.FirstOrDefaultAsync(s => s.Name == storeName);
+            StoresEntity stores = await context.Stores.FirstOrDefaultAsync(s => s.Id == storeId);
             if (stores == null)
             {
                 throw new NoExistInDbException(ExceptionMessages.CannotAddProductToStoreSTORE());

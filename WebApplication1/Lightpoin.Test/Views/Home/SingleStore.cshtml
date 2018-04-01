@@ -1,0 +1,10 @@
+﻿@using Lightpoin.Test.Web.Models
+@model StoreModel
+<tr>
+    <th>@Model.Id</th>
+    <th>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@Url.Action()Home/Product?productId=@Model.Id">@Model.Name</button>
+    </th>
+    <th>@Model.Address</th>
+    <th>@Model.WorkingHours</th>
+</tr>

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Lightpoint.Test.Business.Interface
 {
-    public interface IProductManager
+    public interface IManager<TStruct> where TStruct : struct
     {
-        Task<IEnumerable<ProductStruct>> GetAllAsync();
-        Task<ProductStruct> GetOneAsync(int id);
-        Task<bool> AddAsync(ProductStruct productStruct);
+        Task<IEnumerable<TStruct>> GetAllAsync();
+        Task<TStruct> GetOneAsync(int id);
+        Task<(bool, int)> AddAsync(TStruct productStruct);
         Task<bool> RemoveAsync(int id);
     }
 }

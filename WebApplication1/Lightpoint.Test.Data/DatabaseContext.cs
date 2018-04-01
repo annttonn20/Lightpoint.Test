@@ -18,7 +18,6 @@ namespace Lightpoint.Test.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ProductsAndStoresEntity>().HasKey(ps => new { ps.ProductId, ps.StoreId });
-            modelBuilder.Entity<StoresEntity>().HasIndex(s => s.Name).IsUnique(true);
             modelBuilder.Entity<ProductsEntity>().HasIndex(p => p.Name).IsUnique(true);
             base.OnModelCreating(modelBuilder);
         }

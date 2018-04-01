@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Lightpoint.Test.Data.Migrations
 {
-    public partial class CreateDatabase : Migration
+    public partial class CreateDataBase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -70,12 +70,6 @@ namespace Lightpoint.Test.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ProductsEntity_Name",
                 table: "ProductsEntity",
-                column: "Name",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StoresEntity_Name",
-                table: "StoresEntity",
                 column: "Name",
                 unique: true);
         }
