@@ -79,9 +79,13 @@ namespace Lightpoint.Test.Business
         }
 
 
-        public async Task<StoreStruct> GetOneAsync(int id)
+        public async Task<StoreStruct> GetOneAsync(string name)
         {
-            StoresEntity storesEntity = await context.Stores.Include(c => c.StoreProduct).SingleOrDefaultAsync(s => s.Id == id);
+            StoresEntity storesEntity = await context.Stores.Include(c => c.StoreProduct).SingleOrDefaultAsync(s => s.Name == name);
+            if(storesEntity == null)
+            {
+                throw new NoExistInDbException(ExceptionMessages.CannotFindStore());
+            }
             return await CreatStoreStruct(storesEntity);
         }
 

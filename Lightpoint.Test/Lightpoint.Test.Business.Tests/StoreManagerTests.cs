@@ -18,16 +18,20 @@ namespace Lightpoint.Test.Business.Tests
         [AutoData]
         public async Task AddAsyncTestOkAsync(string databasename, string address, string name)
         {
+
             StoreStruct storeStruct = new StoreStruct { Address = address, Name = name };
             using (InMemoryContext context = new InMemoryContext(databasename))
             {
                 StoreManager store = new StoreManager(context);
+                
 
                 (bool result, int id) = await store.AddAsync(storeStruct);
 
                 Assert.IsTrue(result);
             }
         }
+
+
 
 
         [Test]

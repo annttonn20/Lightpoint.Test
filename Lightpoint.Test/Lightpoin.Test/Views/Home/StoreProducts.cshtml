@@ -1,5 +1,5 @@
 ﻿@using Lightpoin.Test.Web.Models
-@model IEnumerable<ProductModel>
+@model AddProductToStoreModel
 
 
 
@@ -8,15 +8,66 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
-</div>
-<div class="modal-body">
-
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
             <h2><span class="label label-primary">@ViewData["StoreName"]</span></h2>
+            <div class="row">
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseAddProductToStore" aria-expanded="false" aria-controls="collapseAddProductToStore">
+                    Add product to Store
+                </button>
+            </div>
         </div>
     </div>
-    
+</div>
+<div class="modal-body">
+
+
+    <div class="collapse" id="collapseAddProductToStore">
+        <div class="jumbotron">
+
+            <form action="@Url.Action("AddProductToStore")" method="post" id="AddProductToStore">
+                @if (ViewData.ContainsKey("Errors"))
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <strong>@ViewData["Errors"]</strong> Try Again
+                    </div>
+
+                }
+                @if (ViewData.ContainsKey("Success"))
+                {
+                    <div class="alert alert-success" role="alert">
+                        <strong>@ViewData["Success"]</strong> 
+                    </div>
+
+                }
+                <div class="form-group">
+                    <label for="StoreId" class="control-label">StoreId</label>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon">
+                            <label for="StoreId"><span class="glyphicon glyphicon-shopping-cart" style="color:#286090"></span></label>
+                        </span>
+                        <input type="text" asp-for="StoreName" class="form-control" id="StoreId" placeholder="StoreId" value="@Model.StoreName" readonly>
+                        <span asp-validation-for="StoreName" class="text-danger" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="ProductId" class="control-label">Product Name</label>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon">
+                            <label for="ProductId"><span class="glyphicon glyphicon-apple" style="color:#286090"></span></label>
+                        </span>
+                        <input type="text" asp-for="ProductName" class="form-control" id="Description" placeholder="Product Name">
+                        <span asp-validation-for="ProductName" class="text-danger" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#collapseAddProductToStore" aria-expanded="false" aria-controls="collapseAddProductToStore">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <table id="ProductTable" class="table table-striped table-bordered">
         <thead>
@@ -26,8 +77,8 @@
                 <th>Descriptions</th>
             </tr>
         </thead>
-        <tbody>
-            @{foreach (var product in Model)
+        <tbody id="AddProdictToStoreTable">
+            @{foreach (var product in Model.ProductStructs)
                 {
                     <tr>
                         <th>@product.Id</th>
@@ -39,4 +90,12 @@
         </tbody>
     </table>
 </div>
+@section Scripts {
+    <script>
 
+    </script>
+
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+}

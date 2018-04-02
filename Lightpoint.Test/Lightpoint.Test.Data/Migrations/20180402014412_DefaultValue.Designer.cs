@@ -11,7 +11,7 @@ using System;
 namespace Lightpoint.Test.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20180401055557_DefaultValue")]
+    [Migration("20180402014412_DefaultValue")]
     partial class DefaultValue
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -77,6 +77,9 @@ namespace Lightpoint.Test.Data.Migrations
                         .HasColumnName("WorkingHours");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("StoresEntity");
                 });

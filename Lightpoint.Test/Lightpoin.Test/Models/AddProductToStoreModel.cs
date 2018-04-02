@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lightpoint.Test.Business.Structure;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace Lightpoin.Test.Web.Models
         [Required(ErrorMessage = "The field can not be empty")]
         public string ProductName { get; set; }
         [Required(ErrorMessage = "The field can not be empty")]
-        public int StoreId { get; set; }
+        public string StoreName { get; set; }
+        public IEnumerable<ProductStruct> ProductStructs { get; set; }
     }
 }

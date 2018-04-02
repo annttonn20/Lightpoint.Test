@@ -141,6 +141,50 @@ namespace Lightpoint.Test.Business.Exception_Messages
             return null;
         }
 
+        public static string CannotFindProduct()
+        {
+            switch (CultureInfo.CurrentCulture.Name)
+            {
+                case "ru-RU":
+                    {
+                        return "Не удается найти продукт. Такого продукта не существует";
+                    }
+                case "ru-BY":
+                    {
+                        return "Не удается найти продукт. Такого продукта не существует";
+                    }
+                case "en-GB":
+                    {
+                        return "Can not find product. This product does not exist";
+                    }
+                default:
+                    break;
+            }
+            return null;
+        }
+
+        public static string CannotFindStore()
+        {
+            switch (CultureInfo.CurrentCulture.Name)
+            {
+                case "ru-RU":
+                    {
+                        return "Не удается найти магазину. Такого магазина не существует";
+                    }
+                case "ru-BY":
+                    {
+                        return "Не удается найти магазину. Такого магазина не существует";
+                    }
+                case "en-GB":
+                    {
+                        return "Can not аштв the store. This store does not exist";
+                    }
+                default:
+                    break;
+            }
+            return null;
+        }
+
         public static string CannotRemoveProductFromStoreSTORE()
         {
             switch (CultureInfo.CurrentCulture.Name)

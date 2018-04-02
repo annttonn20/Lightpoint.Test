@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Lightpoin.Test.Models;
+﻿using Lightpoin.Test.Models;
 using Lightpoin.Test.Web.Models;
+using Lightpoint.Test.Business.Exceptions;
 using Lightpoint.Test.Business.Interface;
 using Lightpoint.Test.Business.Structure;
-using Lightpoint.Test.Business.Exceptions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Transport.Libuv.Internal.Networking;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Lightpoin.Test.Controllers
 {
@@ -33,7 +32,7 @@ namespace Lightpoin.Test.Controllers
             storeModel.StoreStructs = await storeManager.GetAllAsync();
 
 
-            return View(storeModel);
+            return View("AllStores", storeModel);
         }
 
         public async Task<IActionResult> AllProducts()
@@ -86,7 +85,7 @@ namespace Lightpoin.Test.Controllers
                         Description = productModel.Description
                     });
                     productModel.Id = id;
-                    return PartialView("SingleProduct",productModel);
+                    return PartialView("SingleProduct", productModel);
                 }
                 catch (ExistsInDBException e)
                 {
@@ -102,14 +101,51 @@ namespace Lightpoin.Test.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddProductToStore(AddProductToStoreModel AddPtoSModel)
+        public async Task<IActionResult> AddProductToStorePartial(AddProductToStoreModel addProductToStore)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    await manager.AddProductToStoreAsync(AddPtoSModel.StoreId, AddPtoSModel.ProductName);
-                    return RedirectToAction(nameof(AllStores));
+                    await manager.AddProductToStoreAsync(addProductToStore.StoreName, addProductToStore.ProductName);
+                    ProductStruct productStruct = await productManager.GetOneAsync(addProductToStore.ProductName);
+                    ProductModel productModel = new ProductModel
+                    {
+                        Id = productStruct.Id,
+                        Name = productStruct.Name,
+                        Description = productStruct.Description
+                    };
+                    return PartialView("SingleProduct", productModel);
+                }
+                catch (ExistsInDBException e)
+                {
+                    ViewData["Errors"] = e.Message;
+                }
+                catch (NoExistInDbException e)
+                {
+                    ViewData["Errors"] = e.Message;
+
+                }
+            }
+            else
+            {
+                ViewData["Errors"] = "The field can not be empty";
+            }
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Content(ViewData["Errors"].ToString());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddProductToStore(AddProductToStoreModel addPtoSModel)
+        {
+            AddProductToStoreModel addProductToStore;
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await manager.AddProductToStoreAsync(addPtoSModel.StoreName, addPtoSModel.ProductName);
+            ViewData["Success"] = "Product added to store " + addPtoSModel.StoreName;
+
                 }
                 catch (ExistsInDBException e)
                 {
@@ -125,7 +161,24 @@ namespace Lightpoin.Test.Controllers
             {
                 ViewData["Errors"] = "Incorrect data entered or some fields are empty";
             }
-            return View(AddPtoSModel);
+
+            //  addProductToStore = new AddProductToStoreModel { ProductStructs = new List<ProductStruct>(), StoreName = storeName };
+            try
+            {
+                StoreStruct storeStruct = await storeManager.GetOneAsync(addPtoSModel.StoreName);
+                ViewData.Add("StoreName", storeStruct.Name);
+                addProductToStore = new AddProductToStoreModel
+                {
+                    ProductStructs = storeStruct.Products,
+                    StoreName = storeStruct.Name
+                };
+            }
+            catch (NoExistInDbException)
+            {
+                addProductToStore = new AddProductToStoreModel { ProductStructs = new List<ProductStruct>(), StoreName = addPtoSModel.StoreName };
+
+            }
+            return View(addProductToStore);
         }
 
 
@@ -134,23 +187,27 @@ namespace Lightpoin.Test.Controllers
             return PartialView();
         }
 
-        public async Task<IActionResult> StoreProducts(int storeId)
+        public async Task<IActionResult> StoreProducts(string storeName)
         {
-            StoreStruct storeStruct = await storeManager.GetOneAsync(storeId);
-            ViewData.Add("StoreName", storeStruct.Name);
-            List<ProductModel> productModels = new List<ProductModel>();
-            foreach (var product in storeStruct.Products)
+            AddProductToStoreModel addProductToStore;
+            try
             {
-                ProductModel productModel = new ProductModel
+                StoreStruct storeStruct = await storeManager.GetOneAsync(storeName);
+                ViewData.Add("StoreName", storeStruct.Name);
+                addProductToStore = new AddProductToStoreModel
                 {
-                    Id = product.Id,
-                    Name = product.Name,
-                    Description = product.Description
+                    ProductStructs = storeStruct.Products,
+                    StoreName = storeStruct.Name
                 };
-                productModels.Add(productModel);
-            }
 
-            return PartialView(productModels);
+                
+            }
+            catch (NoExistInDbException)
+            {
+                addProductToStore = new AddProductToStoreModel { ProductStructs = new List<ProductStruct>(), StoreName = storeName };
+
+            }
+            return PartialView(addProductToStore);
         }
 
 

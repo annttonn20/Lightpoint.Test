@@ -9,7 +9,7 @@ namespace Lightpoint.Test.Business.Interface
     public interface IManager<TStruct> where TStruct : struct
     {
         Task<IEnumerable<TStruct>> GetAllAsync();
-        Task<TStruct> GetOneAsync(int id);
+        Task<TStruct> GetOneAsync(string name);
         Task<(bool, int)> AddAsync(TStruct productStruct);
         Task<bool> RemoveAsync(int id);
     }

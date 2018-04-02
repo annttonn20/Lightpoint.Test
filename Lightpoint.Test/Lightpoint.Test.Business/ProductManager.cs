@@ -56,9 +56,19 @@ namespace Lightpoint.Test.Business
             return result;
         }
 
-        public Task<ProductStruct> GetOneAsync(int id)
+        public async Task<ProductStruct> GetOneAsync(string name)
         {
-            throw new NotImplementedException();
+            ProductsEntity productEntity = await context.Products.Include(c => c.ProductStore).SingleOrDefaultAsync(s => s.Name == name);
+            if (productEntity == null)
+            {
+                throw new NoExistInDbException(ExceptionMessages.CannotFindStore());
+            }
+            return new ProductStruct
+            {
+                Name = productEntity.Name,
+                Description = productEntity.Description,
+                Id = productEntity.Id
+            };
         }
 
         public Task<bool> RemoveAsync(int id)

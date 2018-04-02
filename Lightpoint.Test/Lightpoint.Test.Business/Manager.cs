@@ -22,33 +22,7 @@ namespace Lightpoint.Test.Business
 
 
 
-        public async Task<bool> AddProductToStoreAsync(int storeId, string productName)
-        {
-            StoresEntity stores = await context.Stores.FirstOrDefaultAsync(s => s.Id == storeId);
-            if (stores == null)
-            {
-                throw new NoExistInDbException(ExceptionMessages.CannotAddProductToStoreSTORE());
-            }
-            ProductsEntity products = await context.Products.FirstOrDefaultAsync(p => p.Name == productName);
-            if (products == null)
-            {
-                throw new NoExistInDbException(ExceptionMessages.CannotAddProductToStorePRODUCT());
-            }
-            stores.StoreProduct = new List<ProductsAndStoresEntity>();
-
-            stores.StoreProduct.Add(new ProductsAndStoresEntity { ProductId = products.Id });
-            try
-            {
-                return (await context.SaveChangesAsync()) > 0;
-            }
-
-            catch (DbUpdateException dbe)
-            {
-                throw new ExistsInDBException(ExceptionMessages.CannotAddProductToStore(), dbe);
-            }
-        }
-
-        internal async Task<bool> AddProductToStoreAsync(string storeName, string productName)
+        public async Task<bool> AddProductToStoreAsync(string storeName, string productName)
         {
             StoresEntity stores = await context.Stores.FirstOrDefaultAsync(s => s.Name == storeName);
             if (stores == null)
@@ -73,6 +47,7 @@ namespace Lightpoint.Test.Business
                 throw new ExistsInDBException(ExceptionMessages.CannotAddProductToStore(), dbe);
             }
         }
+
 
 
         public async Task<bool> RemoveProductFromStoreAsync(string storeName, string productName)

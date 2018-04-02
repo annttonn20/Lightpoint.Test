@@ -81,7 +81,7 @@
                         <tr>
                             <th>@store.Id</th>
                             <th>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ShowStoresProducts" data-whatever="@Url.Action()Home/StoreProducts?productId=@store.Id">@store.Name</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ShowStoresProducts" data-whatever="@Url.Action()Home/StoreProducts?storeName=@store.Name">@store.Name</button>
                             </th>
                             <th>@store.Address</th>
                             <th>@store.WorkingHours</th>
@@ -130,12 +130,8 @@
                     alert(data.responseText);
                 });
             });
-            $('#AddProductToStore').submit(function (event) {
-                event.preventDefault();
-                var data = $(this).serialize();
-                var url = $(this).attr('action');
-                $.post(url, data);
-            });
+
+
 
         });
     </script>

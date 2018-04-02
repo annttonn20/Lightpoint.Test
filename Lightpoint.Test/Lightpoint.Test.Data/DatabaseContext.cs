@@ -19,6 +19,7 @@ namespace Lightpoint.Test.Data
         {
             modelBuilder.Entity<ProductsAndStoresEntity>().HasKey(ps => new { ps.ProductId, ps.StoreId });
             modelBuilder.Entity<ProductsEntity>().HasIndex(p => p.Name).IsUnique(true);
+            modelBuilder.Entity<StoresEntity>().HasIndex(p => p.Name).IsUnique(true);
             base.OnModelCreating(modelBuilder);
         }
 
